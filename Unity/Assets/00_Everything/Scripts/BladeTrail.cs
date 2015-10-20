@@ -122,7 +122,12 @@ public class BladeTrail : MonoBehaviour
 
     void OnDrawGizmos()
     {
-        var boxCollider = GameObject.Find("Collision").GetComponent<BoxCollider>();
+        var boxColliderObj = GameObject.Find("Collision");
+
+        if (boxColliderObj == null)
+            return;
+
+        var boxCollider = boxColliderObj.GetComponent<BoxCollider>();
         var boxHeight = boxCollider.size.y;
         var boxUp = boxCollider.transform.up;
         var boxPosCenter = boxCollider.transform.position + boxUp * boxHeight * 0.75f;
@@ -140,7 +145,12 @@ public class BladeTrail : MonoBehaviour
 
     void UpdateFrame()
     {
-        var boxCollider = GameObject.Find("Collision").GetComponent<BoxCollider>();
+        var boxColliderObj = GameObject.Find("Collision");
+
+        if (boxColliderObj == null)
+            return;
+
+        var boxCollider = boxColliderObj.GetComponent<BoxCollider>();
         var boxHeight = boxCollider.size.y;
         var boxUp = boxCollider.transform.up;
         var boxPosCenter = boxCollider.transform.position + boxUp * boxHeight * 0.75f;
