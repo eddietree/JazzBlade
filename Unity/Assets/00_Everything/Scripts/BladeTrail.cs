@@ -24,6 +24,8 @@ public class BladeTrail : MonoBehaviour
     {
         InitFrames();
         InitMesh();
+
+        transform.SetParent(null);
 	}
 
     void InitFrames()
@@ -39,13 +41,13 @@ public class BladeTrail : MonoBehaviour
         GetComponent<MeshFilter>().mesh = mesh;
 
         // verts
-        int numVertsPerFrame = 2;
-        int numVertsTotal = numVertsPerFrame * TrailNumFrames;
-
+        const int numVertsPerFrame = 2;
+        const int numVertsTotal = numVertsPerFrame * TrailNumFrames;
+        
         // indices
-        int numSegs = TrailNumFrames - 1;
-        int numIndicesPerSeg = 6;
-        int numIndicesTotal = numIndicesPerSeg * numSegs;
+        const int numSegs = TrailNumFrames - 1;
+        const int numIndicesPerSeg = 6;
+        const int numIndicesTotal = numIndicesPerSeg * numSegs;
 
         // init arrays
         newVertices = new Vector3[numVertsTotal];
@@ -98,17 +100,56 @@ public class BladeTrail : MonoBehaviour
 
     void UpdateVerts()
     {
-        // TODO
+        const int numVertsPerFrame = 2;
+
+        Mesh mesh = GetComponent<MeshFilter>().mesh;
+        mesh.Clear();
+
+        for (int i = 0; i < numFrames; ++i )
+        {
+            // get curr frame
+            int iFrame = (currFrameIndex + i) % TrailNumFrames;
+            var frame = frames[iFrame];
+
+            // vert offset into VBO
+            int vertOffset = iFrame * numVertsPerFrame;
+
+            newVertices[vertOffset + 0] = frame.posBot;
+            newVertices[vertOffset + 1] = frame.posTop;
+        }
+
+
+        mesh.vertices = newVertices;
+        mesh.uv = newUV;
+        mesh.triangles = newTriangles;
 
         // TODO: calc normals in real-time
     }
 
-    void UpdateFrame()
+    void OnDrawGizmos()
     {
-        var boxCollider = GetComponent<BoxCollider>();
-        var boxPosCenter = boxCollider.transform.position;
+        var boxCollider = GameObject.Find("Collision").GetComponent<BoxCollider>();
         var boxHeight = boxCollider.size.y;
         var boxUp = boxCollider.transform.up;
+        var boxPosCenter = boxCollider.transform.position + boxUp * boxHeight * 0.75f;
+        
+
+        // draw center
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawSphere(boxPosCenter, 0.03f);
+
+        // draw
+        Gizmos.color = Color.red;
+        Gizmos.DrawSphere(boxPosCenter - boxUp * boxHeight*0.5f, 0.02f);
+        Gizmos.DrawSphere(boxPosCenter + boxUp * boxHeight*0.5f, 0.02f);
+    }
+
+    void UpdateFrame()
+    {
+        var boxCollider = GameObject.Find("Collision").GetComponent<BoxCollider>();
+        var boxHeight = boxCollider.size.y;
+        var boxUp = boxCollider.transform.up;
+        var boxPosCenter = boxCollider.transform.position + boxUp * boxHeight * 0.75f;
 
         // check pos?
         var boxPosTop = boxPosCenter + boxUp * boxHeight * 0.5f;
