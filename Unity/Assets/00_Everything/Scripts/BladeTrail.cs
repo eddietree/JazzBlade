@@ -3,7 +3,7 @@ using System.Collections;
 
 public class BladeTrail : MonoBehaviour 
 {
-    const int TrailNumFrames = 64;
+    const int TrailNumFrames = 32;
 
     struct Frame
     {
