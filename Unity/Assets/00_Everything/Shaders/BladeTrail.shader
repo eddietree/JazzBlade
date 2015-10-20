@@ -3,6 +3,7 @@
 	Properties
 	{
 		_MainTex ("Texture", 2D) = "white" {}
+		_TrailColor ("Trail Color", Color) = (1,1,1,1)
 	}
 	SubShader
 	{
@@ -12,7 +13,7 @@
 		
 		Pass
 		{
-			Blend SrcAlpha OneMinusSrcAlpha // Alpha blending
+			Blend SrcAlpha One // Alpha blending
 			Cull Off
 
 			CGPROGRAM
@@ -38,6 +39,7 @@
 
 			sampler2D _MainTex;
 			float4 _MainTex_ST;
+			float4 _TrailColor;
 			
 			v2f vert (appdata v)
 			{
@@ -58,19 +60,20 @@
 				// sample the texture
 				float2 uv = i.uv;
 
-				float perlin = tex2D(_MainTex, uv * float2(0.1f,1.0)).x;
-				float3 perlinContrast = contrast( float3(perlin,perlin,perlin), 2.5f );
+				float perlin = tex2D(_MainTex, uv * float2(0.2f,0.5)).x;
+				float3 perlinContrast = contrast( float3(perlin,perlin,perlin), 2.0f );
 			
-				fixed4 finalColor = fixed4(1.0,1.0,1.0,1.0);
-				finalColor.xyz = perlinContrast;
+				fixed4 finalColor = _TrailColor;
+				finalColor.xyz = lerp( finalColor.xyz, float3(1.0,1.0,1.0), uv.y);
+				//finalColor.xyz *= perlinContrast;
 
 				// alpha
-				float fadeOutYThresX = 0.1f;
-				float fadeOutYThresY = 0.1f;
+				float fadeOutYThresX = 0.25f;
+				float fadeOutYThresY = 0.2f;
 
 				finalColor.w = perlinContrast.x;
-				finalColor.w *= smoothstep( uv.x, 0.0f, fadeOutYThresX) * smoothstep( uv.x, 1.0f, 1.0f-fadeOutYThresX);
-				finalColor.w *= smoothstep( uv.y, 0.0f, fadeOutYThresY) * smoothstep( uv.y, 1.0f, 1.0f-fadeOutYThresY);
+				finalColor.w *= smoothstep( uv.x, 1.0f, 1.0f-fadeOutYThresX);
+				finalColor.w *= smoothstep( uv.y, 0.0f, fadeOutYThresY) * smoothstep( uv.y, 1.0f, 0.98);
 
 				fixed4 col = finalColor;
 
