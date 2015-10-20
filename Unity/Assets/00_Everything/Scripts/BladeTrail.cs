@@ -3,7 +3,7 @@ using System.Collections;
 
 public class BladeTrail : MonoBehaviour 
 {
-    const int TrailNumFrames = 64;
+    const int TrailNumFrames = 32;
 
     struct Frame
     {
@@ -66,12 +66,6 @@ public class BladeTrail : MonoBehaviour
             newUV[vertIndex + 0] = new Vector2( deltaTexCoordU * iFrame, 0.0f );
             newUV[vertIndex + 1] = new Vector2(deltaTexCoordU * iFrame, 1.0f);
         }
-
-        // garbage data
-        newVertices[0] = new Vector3(0.0f, 0.0f, 1.0f);
-        newVertices[1] = new Vector3(1.0f, 0.0f, 0.0f);
-        newVertices[2] = new Vector3(1.0f, 1.0f, 1.0f);
-        newVertices[3] = new Vector3(0.0f, 1.0f, 0.0f);
         
         // indices
         for (int i = 0; i < numSegs; ++i )
