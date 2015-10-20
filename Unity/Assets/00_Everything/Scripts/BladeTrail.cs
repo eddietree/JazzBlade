@@ -7,13 +7,14 @@ public class BladeTrail : MonoBehaviour
 
     struct Frame
     {
-        Vector3 pos0;
-        Vector3 pos1;
-        Quaternion quat;
+        public Vector3 posTop;
+        public Vector3 posBot;
+        public Quaternion quat;
     };
 
     Frame[] frames;
     int numFrames;
+    int currFrameIndex;
 
     private Vector3[] newVertices;
     private Vector2[] newUV;
@@ -22,13 +23,14 @@ public class BladeTrail : MonoBehaviour
 	void Start () 
     {
         InitFrames();
+        InitMesh();
 	}
 
     void InitFrames()
     {
         frames = new Frame[TrailNumFrames];
         numFrames = 0;
-        InitMesh();
+        currFrameIndex = 0;
     }
 
     void InitMesh()
@@ -50,11 +52,21 @@ public class BladeTrail : MonoBehaviour
         newUV = new Vector2[numVertsTotal];
         newTriangles = new int[numIndicesTotal];
         
+        // zero out data
+        for (int i = 0; i < numVertsTotal; ++i)
+        {
+            newVertices[i] = Vector3.zero;
+
+            // TODO - maybe can precalc uvs?
+            newUV[i] = Vector3.zero;
+        }
+
         // garbage data
         newVertices[0] = new Vector3(0.0f, 0.0f, 1.0f);
         newVertices[1] = new Vector3(1.0f, 0.0f, 0.0f);
         newVertices[2] = new Vector3(1.0f, 1.0f, 1.0f);
         newVertices[3] = new Vector3(0.0f, 1.0f, 0.0f);
+        
 
         // indices
         for (int i = 0; i < numSegs; ++i )
@@ -80,6 +92,33 @@ public class BladeTrail : MonoBehaviour
 	
 	void Update () 
     {
-	
+        UpdateFrame();
+        UpdateVerts();
 	}
+
+    void UpdateVerts()
+    {
+        // TODO
+
+        // TODO: calc normals in real-time
+    }
+
+    void UpdateFrame()
+    {
+        var boxCollider = GetComponent<BoxCollider>();
+        var boxPosCenter = boxCollider.transform.position;
+        var boxHeight = boxCollider.size.y;
+        var boxUp = boxCollider.transform.up;
+
+        // check pos?
+        var boxPosTop = boxPosCenter + boxUp * boxHeight * 0.5f;
+        var boxPosBot = boxPosCenter - boxUp * boxHeight * 0.5f;
+
+        frames[currFrameIndex].posTop = boxPosTop;
+        frames[currFrameIndex].posBot = boxPosBot;
+        frames[currFrameIndex].quat = boxCollider.transform.rotation;
+
+        numFrames = Mathf.Min(numFrames + 1, TrailNumFrames);
+        currFrameIndex = (currFrameIndex + 1) % TrailNumFrames;
+    }
 }

@@ -10,7 +10,6 @@
 		Tags { "Queue" = "Transparent" }
 		LOD 100
 		
-
 		Pass
 		{
 			Blend SrcAlpha OneMinusSrcAlpha // Alpha blending
