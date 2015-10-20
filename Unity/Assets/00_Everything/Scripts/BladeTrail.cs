@@ -55,12 +55,16 @@ public class BladeTrail : MonoBehaviour
         newTriangles = new int[numIndicesTotal];
         
         // zero out data
-        for (int i = 0; i < numVertsTotal; ++i)
+        float deltaTexCoordU = 1.0f / (TrailNumFrames - 1);
+        for (int iFrame = 0; iFrame < TrailNumFrames; ++iFrame)
         {
-            newVertices[i] = Vector3.zero;
+            int vertIndex = iFrame * numVertsPerFrame;
+            newVertices[vertIndex + 0] = Vector3.zero;
+            newVertices[vertIndex + 1] = Vector3.zero;
 
-            // TODO - maybe can precalc uvs?
-            newUV[i] = Vector3.zero;
+            // can precalc uvs?
+            newUV[vertIndex + 0] = new Vector2( deltaTexCoordU * iFrame, 0.0f );
+            newUV[vertIndex + 1] = new Vector2(deltaTexCoordU * iFrame, 1.0f);
         }
 
         // garbage data
@@ -69,7 +73,6 @@ public class BladeTrail : MonoBehaviour
         newVertices[2] = new Vector3(1.0f, 1.0f, 1.0f);
         newVertices[3] = new Vector3(0.0f, 1.0f, 0.0f);
         
-
         // indices
         for (int i = 0; i < numSegs; ++i )
         {
@@ -81,8 +84,8 @@ public class BladeTrail : MonoBehaviour
             newTriangles[indexOffset + 2] = vertOffset+3;
 
             newTriangles[indexOffset + 3] = vertOffset + 0;
-            newTriangles[indexOffset + 4] = vertOffset + 2;
-            newTriangles[indexOffset + 5] = vertOffset + 3;
+            newTriangles[indexOffset + 4] = vertOffset + 3;
+            newTriangles[indexOffset + 5] = vertOffset + 2;
         }
 
         mesh.vertices = newVertices;
@@ -101,23 +104,20 @@ public class BladeTrail : MonoBehaviour
     void UpdateVerts()
     {
         const int numVertsPerFrame = 2;
-
         Mesh mesh = GetComponent<MeshFilter>().mesh;
-        mesh.Clear();
 
         for (int i = 0; i < numFrames; ++i )
         {
             // get curr frame
-            int iFrame = (currFrameIndex + i) % TrailNumFrames;
+            int iFrame = (currFrameIndex - i - 1 + TrailNumFrames) % TrailNumFrames;
             var frame = frames[iFrame];
 
             // vert offset into VBO
-            int vertOffset = iFrame * numVertsPerFrame;
+            int vertOffset = i * numVertsPerFrame;
 
             newVertices[vertOffset + 0] = frame.posBot;
             newVertices[vertOffset + 1] = frame.posTop;
         }
-
 
         mesh.vertices = newVertices;
         mesh.uv = newUV;

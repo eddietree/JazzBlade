@@ -6,20 +6,18 @@
 	}
 	SubShader
 	{
-		//Tags { "RenderType"="Opaque" }
-		Tags { "Queue" = "Transparent" }
+		Tags { "RenderType"="Opaque" }
+		//Tags { "Queue" = "Transparent" }
 		LOD 100
 		
 		Pass
 		{
 			Blend SrcAlpha OneMinusSrcAlpha // Alpha blending
-			Cull  Off
+			Cull Off
 
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
-			// make fog work
-			#pragma multi_compile_fog
 			
 			#include "UnityCG.cginc"
 
@@ -54,8 +52,10 @@
 			{
 				// sample the texture
 				fixed4 col = tex2D(_MainTex, i.uv);
-				col.xyz = i.normal;
-				// apply fog
+
+				col.xy = i.uv.xy;
+				col.z = 0.0f;
+
 				return col;
 			}
 			ENDCG
