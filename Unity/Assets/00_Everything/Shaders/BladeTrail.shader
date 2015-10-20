@@ -15,6 +15,7 @@
 		{
 			Blend SrcAlpha One // Alpha blending
 			Cull Off
+			ZWrite Off
 
 			CGPROGRAM
 			#pragma vertex vert
@@ -59,9 +60,12 @@
 			{
 				// sample the texture
 				float2 uv = i.uv;
+				float2 uv2 = i.uv * 0.1;
 
-				float perlin = tex2D(_MainTex, uv * float2(0.2f,0.5)).x;
+				float perlin = tex2D(_MainTex, uv * float2(0.15f,0.5)).x;
+				float perlin2 = tex2D(_MainTex, uv2 ).x;
 				float3 perlinContrast = contrast( float3(perlin,perlin,perlin), 2.0f );
+				float3 perlinContrast2 = contrast( float3(perlin2,perlin2,perlin2), 7.0f );
 			
 				fixed4 finalColor = _TrailColor;
 				finalColor.xyz = lerp( finalColor.xyz, float3(1.0,1.0,1.0), uv.y);
@@ -74,6 +78,7 @@
 				finalColor.w = perlinContrast.x;
 				finalColor.w *= smoothstep( uv.x, 1.0f, 1.0f-fadeOutYThresX);
 				finalColor.w *= smoothstep( uv.y, 0.0f, fadeOutYThresY) * smoothstep( uv.y, 1.0f, 0.98);
+				//finalColor.w *= lerp( uv.y, 2.0f, perlinContrast2);
 
 				fixed4 col = finalColor;
 
