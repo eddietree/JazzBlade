@@ -20,7 +20,9 @@ public class BeatSphere : MonoBehaviour
 
         int[] semitones =
         {
-            0, 4, 7, 11, 12
+            0, 4, 7, 11, 
+            12, 12+4,
+            -1,
         };
 
         // pitch
