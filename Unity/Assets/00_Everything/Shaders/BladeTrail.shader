@@ -7,15 +7,17 @@
 	}
 	SubShader
 	{
-		Tags { "RenderType"="Opaque" }
+		//Tags { "RenderType"="Opaque" }
 		//Tags { "Queue" = "Transparent" }
-		LOD 100
+		Tags {"Queue"="Transparent" "IgnoreProjector"="True" "RenderType"="Transparent"}
+		LOD 200
 		
 		Pass
 		{
 			Blend SrcAlpha One // Alpha blending
 			Cull Off
 			ZWrite Off
+			Lighting Off
 
 			CGPROGRAM
 			#pragma vertex vert
@@ -72,13 +74,18 @@
 				//finalColor.xyz *= perlinContrast;
 
 				// alpha
-				float fadeOutYThresX = 0.25f;
-				float fadeOutYThresY = 0.2f;
+				float fadeOutYThresX = 0.15f;
+				float fadeOutYThresY = 0.1f;
 
 				finalColor.w = perlinContrast.x;
 				finalColor.w *= smoothstep( uv.x, 1.0f, 1.0f-fadeOutYThresX);
 				finalColor.w *= smoothstep( uv.y, 0.0f, fadeOutYThresY) * smoothstep( uv.y, 1.0f, 0.98);
 				//finalColor.w *= lerp( uv.y, 2.0f, perlinContrast2);
+
+				if ( finalColor.w < 0.35)
+				{
+					discard;
+				}
 
 				fixed4 col = finalColor;
 

@@ -87,6 +87,7 @@ public class BladeTrail : MonoBehaviour
         mesh.triangles = newTriangles;
 
         mesh.RecalculateNormals();
+        mesh.MarkDynamic();
     }
 	
 	void Update () 
@@ -118,6 +119,8 @@ public class BladeTrail : MonoBehaviour
         mesh.triangles = newTriangles;
 
         // TODO: calc normals in real-time
+
+        mesh.RecalculateBounds();
     }
 
     void OnDrawGizmos()
