@@ -1,37 +1,40 @@
 ﻿using UnityEngine;
 using System.Collections;
+using DG.Tweening;
 
 public class BeatSphere : MonoBehaviour {
 
 	void Start () 
     {
         StartCoroutine("HeadTowardsPlayer");
+
+        transform.DOPunchScale(Vector3.one * 0.1f, secsPerBeat * 0.5f);
 	}
 	
-	void Update () {
-	
+	void Update () 
+    {
 	}
+
 
     IEnumerator HeadTowardsPlayer()
     {
         float secsPerBeat = GameObject.Find("BPM").GetComponent<BPM>().GetSecsPerBeat();
-
-        yield return new WaitForSeconds(secsPerBeat);
-
+        
         var cam = Camera.main;
         var dst = cam.transform.position;
         var src = transform.position;
         var dist = ( dst - src).magnitude;
+
+        float delayNumBeats = 3.0f;
         
-        var timeLeft = secsPerBeat * 4.0f;
-        var numFrames = timeLeft / Time.deltaTime;
-        var stepPerFrame = dist / numFrames;
 
-        while(true)
-        {
-            transform.position = Vector3.MoveTowards(transform.position, dst, stepPerFrame);
+        yield return new WaitForSeconds(secsPerBeat * delayNumBeats);
 
-            yield return null;
-        }
+        //transform.DOMove(dst, secsPerBeat * (4.0 - delayNumBeats));
+        var timeLeft = secsPerBeat * (4-delayNumBeats);
+        transform.DOMove(dst, timeLeft).SetEase( Ease.InBack);
+
+        yield return new WaitForSeconds(secsPerBeat);
+        Destroy(gameObject);
     }
 }

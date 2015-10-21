@@ -33,8 +33,8 @@ public class SpawnTest : MonoBehaviour {
 
             if (pattern == 1)
             {
-                var deltaAngle = Mathf.PI / 3.0f;
-                var angle = deltaAngle * (beatCount % patterns.Length);
+                var deltaAngle = Mathf.PI / 4.0f;
+                var angle = deltaAngle * (1.0f+beatCount % patterns.Length);
                 var spawnRadius = 0.5f;
 
                 var spawnPos = transform.position + Vector3.forward * Mathf.Cos(angle) * spawnRadius + Vector3.up * Mathf.Sin(angle) * spawnRadius;
