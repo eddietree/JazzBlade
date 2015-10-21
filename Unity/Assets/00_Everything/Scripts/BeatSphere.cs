@@ -62,4 +62,21 @@ public class BeatSphere : MonoBehaviour
         yield return new WaitForSeconds(secsPerBeat);
         Destroy(gameObject);
     }
+
+    void OnCollisionEnter(Collision collision)
+    {
+        var collider = collision.collider;
+
+        if (collider.name == "ShieldCollision")
+        {
+            var audioSrc = GetComponent<AudioSource>();
+            audioSrc.pitch = 1.0f;
+            audioSrc.Play();
+
+            StopCoroutine("HeadTowardsPlayer");
+
+            Debug.Log(collider.name);
+            Destroy(gameObject);
+        }
+    }
 }

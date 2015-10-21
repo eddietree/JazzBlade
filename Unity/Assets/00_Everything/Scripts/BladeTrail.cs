@@ -125,7 +125,7 @@ public class BladeTrail : MonoBehaviour
 
     void OnDrawGizmos()
     {
-        var boxColliderObj = GameObject.Find("Collision");
+        var boxColliderObj = GameObject.Find("SwordCollision");
 
         if (boxColliderObj == null)
             return;
@@ -148,7 +148,7 @@ public class BladeTrail : MonoBehaviour
 
     void UpdateFrame()
     {
-        var boxColliderObj = GameObject.Find("Collision");
+        var boxColliderObj = GameObject.Find("SwordCollision");
 
         if (boxColliderObj == null)
             return;
